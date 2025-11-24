@@ -9,8 +9,5 @@ This project demonstrates how many key elements from rocks you can find in river
    PseudoCOde created at 6.11.2025 added 25.11
    
 
-## How to run - openmindat
+## How to run - will be continue....
 ```bash
-pip install -r requirements.txt
-python main.py
-open mineral_map.html  # View interactive map
