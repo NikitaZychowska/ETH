@@ -94,59 +94,8 @@ class MapReader:
         print(f"Learned {len(self.custom_legend)} rock types.")
         print("="*40)
 
-    def start_analysis(self):
-        """
-        Switches to normal mode where clicking identifies rocks.
-        """
-        self.ax.clear() 
-        self.ax.imshow(self.image)
-        self.ax.set_title("PHASE 2:Analize")
-        self.ax.axis('on')
-        self.fig.canvas.draw()
-        
-        #connect the standard click event
-        self.cid = self.fig.canvas.mpl_connect('button_press_event', self.onclick)
-        
-        #keep window open
-        plt.show()
-
-    def onclick(self, event):
-        """Standard analysis click"""
-        if event.inaxes != self.ax: return
-
-        x, y = int(event.xdata), int(event.ydata)
-        
-        #draw red dot
-        self.ax.plot(x, y, 'ro', markersize=5)
-        self.fig.canvas.draw()
-
-        #identify rock
-        clicked_color = self.get_pixel_color(x, y)
-        if clicked_color:
-            self.identify_rock(clicked_color)
-
-    def identify_rock(self, target_rgb):
-        """Find closest match in our NEW custom legend"""
-        r, g, b = target_rgb
-        min_dist = float('inf')
-        best_name = "Unknown"
-
-        for legend_rgb, name in self.custom_legend.items():
-            lr, lg, lb = legend_rgb
-            dist = np.sqrt((r-lr)**2 + (g-lg)**2 + (b-lb)**2)
-            
-            if dist < min_dist:
-                min_dist = dist
-                best_name = name
-        
-        print("-" * 30)
-        print(f"Color: {target_rgb}")
-        if min_dist < 60: #tolerance
-            print(f"RESULT: {best_name.upper()}")
-        else:
-            print("RESULT: No matching color found in your legend.")
-        print("-" * 30)
-
+    #def start_analysis(self):
+ 
 def select_file_window():
     root = tk.Tk()
     root.withdraw()
