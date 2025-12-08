@@ -23,9 +23,4 @@ Click once more to finish, and type "EXIT".
 
 Refresh: This option removes the blue "X" marks from the screen in preparation for an analysis.
 Phase 2: Analysis:
-
-You click anywhere on the main map.
-The program looks at the color you clicked.
-
-In progress It mathematically - using Euclidean distance - compares it with colors taught in Phase 1. It will print in the console the name of the nearest matching rock.
-```bash
+~~Work is in progress...
