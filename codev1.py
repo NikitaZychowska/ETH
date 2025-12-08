@@ -5,9 +5,6 @@ import tkinter as tk
 from tkinter import filedialog
 import sys
 
-#put map file in the same folder-later I will crate pop up window for that
-MAP_PATH = '/home/nikita/Projects/ETH/map geo.jpg'
-
 class MapReader:
     def __init__(self, image_path):
         try:
