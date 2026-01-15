@@ -15,21 +15,20 @@ class MapReader:
             self.image = mpimg.imread(image_path)
             self.height, self.width = self.image.shape[:2]
         except Exception as e:
-            print(f"ERROR:Could not load image- {str(e)}")
+            print(f"ERROR: Could not load image- {str(e)}")
             sys.exit(1)
         
         self.custom_legend = {}
         self.fig, self.ax = plt.subplots(figsize=(12, 8))
         self.ax.imshow(self.image)
-        self.ax.set_title("LEGEND TRAINING: CLICK ON COLOR SWATCHES")
+        self.ax.set_title("LEGEND: click on color buttoms")
         self.ax.axis('on')
-        self.fig.canvas.manager.set_window_title("Geological Map - Legend Trainer")
+        self.fig.canvas.manager.set_window_title("Geological Map - Legend")
         
         plt.show(block=False)
-        print("\n" + "="*60)
-        print("LEGEND TRAINING STARTED- CLICK ON EACH COLOR SWATCH")
-        print("CLICK ON COLOR SWATCH→ TYPE ROCK NAME→ PRESS ENTER")
-        print("Press MIDDLE MOUSE BUTTON to finish")
+        print("1. Click on each color swach LEGEND")
+        print("2. Type rock name →PRESS ENTER")
+        print("Write in console or press middle mouse button to finish")
         
         self.train_legend()
         self.finish_training()
@@ -134,7 +133,6 @@ class ValidationTable:
         self.root.mainloop()
     
     def on_double_click(self, event):
-        """Handle double-click to edit a cell"""
         # NEED TO FIX IT
         item = self.tree.identify_row(event.y)
         column = self.tree.identify_column(event.x)
@@ -158,13 +156,11 @@ class ValidationTable:
         entry.place(x=x, y=y, width=width, height=height)
     
     def save_edit(self, item, col_idx, new_value):
-        """Save edited value and update"""
         values = list(self.tree.item(item, "values"))
         values[col_idx] = new_value
         self.tree.item(item, values=values)
     
     def confirm(self):
-        """Save new data and close window"""
         new_legend = {}
         for item in self.tree.get_children():
             color_str, rock_name = self.tree.item(item, "values")
@@ -178,7 +174,6 @@ class ValidationTable:
         self.root.destroy()
     
     def fix_color(self):
-        """Instruction"""
         messagebox.showinfo(
             "Fix Color",
             "To correct a color:\n\n"
@@ -203,23 +198,16 @@ def select_file_window():
     return path
 
 class RiverAnalyzer:
-
     """FInd river by loooking for blue pixels in raster map (R<100, G<100, B>150)"""
     def __init__(self, image, legend):
-        """
-        image: Loaded map image (numpy array)
-        legend: Custom rock legend dictionary (color -> rock name)
-        """
         self.image = image
         self.legend = legend
         self.height, self.width = image.shape[:2]
         self.river_mask = None
         self.adjacent_rocks = set()
         
-        #convert to 0-255 for processing
         self.image_8bit = (image * 255).astype(np.uint8) if image.max() <= 1.0 else image
         
-        #ensure 3-channel image
         if self.image_8bit.ndim == 2:
             self.image_8bit = np.stack([self.image_8bit]*3, axis=-1)
         elif self.image_8bit.shape[2] > 3:
@@ -230,7 +218,6 @@ class RiverAnalyzer:
         #create a mask of zeros (same size as image)
         mask = np.zeros((self.height, self.width), dtype=np.uint8)
         
-        #scan every pixel for blue river color
         for i in range(self.height):
             for j in range(self.width):
                 r, g, b = self.image_8bit[i, j]
@@ -269,8 +256,7 @@ class RiverAnalyzer:
     def report_results(self):
         """Display river analysis results"""
         print("RIVER ANALYSIS COMPLETE")
-        print("River features detected by direct blue pixel scan (B>150, R<100, G<100)")
-        print("_"*60)
+        print("~River features detected by direct blue pixel scan (B>150, R<100, G<100)~")
         
         if self.adjacent_rocks:
             print(f"Rivers are adjacent to these rock types:")
@@ -310,7 +296,7 @@ class RockDistanceTable:
             5
         )
         
-        #store rock distances by name (in pixels)
+        #store rock distances
         self.rock_distances = {}
         
         #all pixels
@@ -352,7 +338,6 @@ class RockDistanceTable:
         
         if not filtered_rock_distances:
             table.append("No rocks found within {} meters of the river.".format(self.max_distance_m))
-            table.append("="*60)
             return table
         
         #sort by rock name
@@ -375,13 +360,11 @@ class RockDistanceTable:
         return table
     
     def print_table(self):
-        """Print the formatted table to console"""
         for line in self.generate_table():
             print(line)
 
 def get_map_scale():
     """Get map scale input from user (meters per pixel)"""
-    print("\n" + "="*60)
     print("ENTER MAP SCALE (meters per pixel)")
     print("Example: 1 pixel = 10 meters → enter 10.0")
     print("If unsure, press Enter for default (1.0)")
@@ -401,9 +384,9 @@ def get_map_scale():
             print("ERROR: Invalid input. Enter a number.")
 
 if __name__ == "__main__":
-    print("=== GEOLOGICAL MAP LEGEND EXTRACTOR ===")
+    print("=== GEOLOGICAL MAP LEGEND ===")
     print("1. Select a TIFF map with a legend")
-    print("2. Click on each legend color swatch")
+    print("2. Click on each legend color block")
     print("3. Type the corresponding rock name")
     print("4. Write STOP when done\n")
     
@@ -420,15 +403,15 @@ if __name__ == "__main__":
     plt.show()
     
     #after legend training completes, show validation table
-    print("Starting Legend Validation")
+    print("Starting legend validation")
     
     val_table = ValidationTable(app.custom_legend)
     
-    print("Legend validation complete. Processing map...")
+    print("Legend validation complete.Processing map...")
     
     #NEW RIVER ANALYSIS STEP (ADDED HERE)
-    print("\n" + "_"*60)
-    print("Starting River Analysis")
+    print("\n" + "~"*60)
+    print("Starting river analysis")
     
     river_analyzer = RiverAnalyzer(app.image, app.custom_legend)
     river_analyzer.detect_river()
@@ -440,14 +423,12 @@ if __name__ == "__main__":
         print(f"  {color} → {rock}")
     print("="*60)
     
-    # = to fix it ===> 
-    print("\n" + "_"*60)
+    # = to fix it ===>
     print("Enter map scale (meters per pixel)")
     print("Example: 1 pixel = 10 meters → enter 10.0")
     print("Press Enter for default (1.0)")
     scale = get_map_scale()
     
-    print("\n" + "_"*60)
     print("Starting Rock Distance Analysis (with scale: {} m/pixel)".format(scale))
     
     #RockDistanceTable instance using river_mask from RiverAnalyzer - still to fix it
